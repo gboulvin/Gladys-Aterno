@@ -1,0 +1,719 @@
+{
+  "manifest_version": 1,
+  "type": "device",
+  "name": "Aterno",
+  "description": {
+    "en": "Control your Aterno radiators through the Eco Aterno box, locally or via the cloud.",
+    "fr": "Pilotez vos radiateurs Aterno via la box Eco Aterno, en local ou par le cloud.",
+    "de": "Steuern Sie Ihre Aterno-Heizkörper über die Eco-Aterno-Box, lokal oder per Cloud.",
+    "es": "Controle sus radiadores Aterno mediante la box Eco Aterno, en local o por la nube."
+  },
+  "version": "0.0.0",
+  "docker_image": "ghcr.io/gboulvin/gladys-aterno:0.0.0",
+  "gladys_version": ">=5.1.0",
+  "cover_image": "https://raw.githubusercontent.com/gboulvin/Gladys-Aterno/main/cover.jpg",
+  "categories": ["climate"],
+  "transports": ["local", "cloud"],
+  "config_schema": [
+    {
+      "key": "intro",
+      "type": "section",
+      "label": {
+        "en": "Your Eco Aterno box",
+        "fr": "Votre box Eco Aterno",
+        "de": "Ihre Eco-Aterno-Box",
+        "es": "Su box Eco Aterno"
+      },
+      "description": {
+        "en": "The integration talks to the Eco Aterno box, the one the Eco Aterno app uses. Enter the MAC address printed on the back of the box and the password you chose in the app. Your radiators must already be paired with the box in the Eco Aterno app.",
+        "fr": "L'intégration dialogue avec la box Eco Aterno, celle qu'utilise l'application Eco Aterno. Saisissez l'adresse MAC inscrite au dos de la box et le mot de passe choisi dans l'application. Vos radiateurs doivent déjà être associés à la box dans l'application Eco Aterno.",
+        "de": "Die Integration spricht mit der Eco-Aterno-Box, die auch die Eco-Aterno-App nutzt. Geben Sie die MAC-Adresse von der Rückseite der Box und das in der App gewählte Passwort ein. Ihre Heizkörper müssen bereits in der Eco-Aterno-App mit der Box gekoppelt sein.",
+        "es": "La integración se comunica con la box Eco Aterno, la misma que usa la aplicación Eco Aterno. Introduzca la dirección MAC impresa en la parte trasera de la box y la contraseña elegida en la aplicación. Sus radiadores ya deben estar asociados a la box en la aplicación Eco Aterno."
+      }
+    },
+    {
+      "key": "mac",
+      "type": "string",
+      "label": {
+        "en": "MAC address of the box",
+        "fr": "Adresse MAC de la box",
+        "de": "MAC-Adresse der Box",
+        "es": "Dirección MAC de la box"
+      },
+      "description": {
+        "en": "12 characters, printed on the back of the box. Separators are ignored.",
+        "fr": "12 caractères, inscrits au dos de la box. Les séparateurs sont ignorés.",
+        "de": "12 Zeichen, auf der Rückseite der Box. Trennzeichen werden ignoriert.",
+        "es": "12 caracteres, impresos en la parte trasera de la box. Los separadores se ignoran."
+      },
+      "placeholder": {
+        "en": "e.g. 001A25123456",
+        "fr": "ex. 001A25123456",
+        "de": "z. B. 001A25123456",
+        "es": "p. ej. 001A25123456"
+      },
+      "required": true
+    },
+    {
+      "key": "password",
+      "type": "secret",
+      "label": {
+        "en": "Password of the box",
+        "fr": "Mot de passe de la box",
+        "de": "Passwort der Box",
+        "es": "Contraseña de la box"
+      },
+      "description": {
+        "en": "The password you chose when adding the residence in the Eco Aterno app.",
+        "fr": "Le mot de passe choisi à l'ajout de la résidence dans l'application Eco Aterno.",
+        "de": "Das Passwort, das Sie beim Anlegen des Wohnsitzes in der Eco-Aterno-App gewählt haben.",
+        "es": "La contraseña elegida al añadir la residencia en la aplicación Eco Aterno."
+      },
+      "required": true
+    },
+    {
+      "key": "host",
+      "type": "string",
+      "label": {
+        "en": "Local IP address of the box",
+        "fr": "Adresse IP locale de la box",
+        "de": "Lokale IP-Adresse der Box",
+        "es": "Dirección IP local de la box"
+      },
+      "description": {
+        "en": "Optional. Fill it in to control the radiators over your local network, without Internet. Left empty, the integration goes through the cloud.",
+        "fr": "Facultatif. Renseignez-la pour piloter les radiateurs par votre réseau local, sans Internet. Laissée vide, l'intégration passe par le cloud.",
+        "de": "Optional. Tragen Sie sie ein, um die Heizkörper über Ihr lokales Netz zu steuern, ohne Internet. Bleibt das Feld leer, läuft die Integration über die Cloud.",
+        "es": "Opcional. Rellénela para controlar los radiadores por su red local, sin Internet. Si se deja vacía, la integración pasa por la nube."
+      },
+      "placeholder": {
+        "en": "e.g. 192.168.1.50",
+        "fr": "ex. 192.168.1.50",
+        "de": "z. B. 192.168.1.50",
+        "es": "p. ej. 192.168.1.50"
+      },
+      "required": false
+    },
+    {
+      "key": "language",
+      "type": "select",
+      "label": {
+        "en": "Language of the device names",
+        "fr": "Langue des noms d'appareils",
+        "de": "Sprache der Gerätenamen",
+        "es": "Idioma de los nombres de dispositivos"
+      },
+      "description": {
+        "en": "Used to name the features of the radiators when they are created in Gladys.",
+        "fr": "Sert à nommer les fonctionnalités des radiateurs à leur création dans Gladys.",
+        "de": "Wird für die Namen der Heizkörper-Funktionen beim Anlegen in Gladys verwendet.",
+        "es": "Se usa para nombrar las funciones de los radiadores al crearlos en Gladys."
+      },
+      "required": false,
+      "default": "fr",
+      "options": [
+        {
+          "value": "en",
+          "label": { "en": "English", "fr": "Anglais", "de": "Englisch", "es": "Inglés" }
+        },
+        {
+          "value": "fr",
+          "label": { "en": "French", "fr": "Français", "de": "Französisch", "es": "Francés" }
+        },
+        {
+          "value": "de",
+          "label": { "en": "German", "fr": "Allemand", "de": "Deutsch", "es": "Alemán" }
+        },
+        {
+          "value": "es",
+          "label": { "en": "Spanish", "fr": "Espagnol", "de": "Spanisch", "es": "Español" }
+        }
+      ]
+    },
+    {
+      "key": "poll_frequency",
+      "type": "number",
+      "label": {
+        "en": "Refresh interval (s)",
+        "fr": "Intervalle de rafraîchissement (s)",
+        "de": "Aktualisierungsintervall (s)",
+        "es": "Intervalo de actualización (s)"
+      },
+      "description": {
+        "en": "The box reports every change as it happens. This full re-read is only a safety net.",
+        "fr": "La box signale chaque changement en direct. Cette relecture complète n'est qu'un filet de sécurité.",
+        "de": "Die Box meldet jede Änderung sofort. Dieses vollständige Neueinlesen ist nur ein Sicherheitsnetz.",
+        "es": "La box comunica cada cambio en directo. Esta relectura completa es solo una red de seguridad."
+      },
+      "required": false,
+      "default": 300,
+      "min": 60,
+      "max": 3600
+    },
+    {
+      "key": "mediation_host",
+      "type": "string",
+      "label": {
+        "en": "Cloud server (advanced)",
+        "fr": "Serveur cloud (avancé)",
+        "de": "Cloud-Server (erweitert)",
+        "es": "Servidor en la nube (avanzado)"
+      },
+      "description": {
+        "en": "The relay the box uses for remote access. Keep the default value unless told otherwise.",
+        "fr": "Le relais qu'utilise la box pour l'accès à distance. Gardez la valeur par défaut, sauf indication contraire.",
+        "de": "Das Relais, das die Box für den Fernzugriff nutzt. Behalten Sie den Standardwert bei, sofern nicht anders angegeben.",
+        "es": "El relé que usa la box para el acceso remoto. Mantenga el valor por defecto salvo indicación contraria."
+      },
+      "required": false,
+      "default": "mediation.tydom.com"
+    }
+  ],
+  "actions": [
+    {
+      "key": "test_connection",
+      "label": {
+        "en": "Test the connection",
+        "fr": "Tester la connexion",
+        "de": "Verbindung testen",
+        "es": "Probar la conexión"
+      },
+      "description": {
+        "en": "Connects to the box and tells which channel is used and how many radiators it found.",
+        "fr": "Se connecte à la box et indique le canal utilisé et le nombre de radiateurs trouvés.",
+        "de": "Verbindet sich mit der Box und zeigt den genutzten Kanal und die Anzahl der gefundenen Heizkörper.",
+        "es": "Se conecta a la box e indica el canal usado y cuántos radiadores ha encontrado."
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "key": "refresh_devices",
+      "label": {
+        "en": "Look for new radiators",
+        "fr": "Rechercher de nouveaux radiateurs",
+        "de": "Nach neuen Heizkörpern suchen",
+        "es": "Buscar nuevos radiadores"
+      },
+      "description": {
+        "en": "Reads the list of radiators again, after pairing or renaming one in the Eco Aterno app.",
+        "fr": "Relit la liste des radiateurs, après en avoir associé ou renommé un dans l'application Eco Aterno.",
+        "de": "Liest die Heizkörperliste neu ein, nachdem Sie einen in der Eco-Aterno-App gekoppelt oder umbenannt haben.",
+        "es": "Vuelve a leer la lista de radiadores, tras asociar o renombrar uno en la aplicación Eco Aterno."
+      },
+      "timeout_seconds": 60
+    }
+  ],
+  "scene_triggers": [
+    {
+      "key": "radiator_mode_changed",
+      "label": {
+        "en": "Radiator mode changed",
+        "fr": "Mode d'un radiateur modifié",
+        "de": "Heizkörper-Modus geändert",
+        "es": "Modo de un radiador cambiado"
+      },
+      "description": {
+        "en": "A radiator was switched on, off or to frost protection from the Eco Aterno app or its thermostat.",
+        "fr": "Un radiateur a été mis en marche, à l'arrêt ou en hors-gel depuis l'application Eco Aterno ou son thermostat.",
+        "de": "Ein Heizkörper wurde über die Eco-Aterno-App oder sein Thermostat ein-, ausgeschaltet oder auf Frostschutz gestellt.",
+        "es": "Un radiador se ha encendido, apagado o puesto en antihielo desde la aplicación Eco Aterno o su termostato."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": { "en": "Radiator", "fr": "Radiateur", "de": "Heizkörper", "es": "Radiador" }
+        },
+        {
+          "key": "mode",
+          "type": "multi_select",
+          "label": {
+            "en": "New mode",
+            "fr": "Nouveau mode",
+            "de": "Neuer Modus",
+            "es": "Nuevo modo"
+          },
+          "options": [
+            {
+              "value": "heating",
+              "label": { "en": "Heating", "fr": "En marche", "de": "Heizen", "es": "En marcha" }
+            },
+            {
+              "value": "off",
+              "label": { "en": "Off", "fr": "Arrêt", "de": "Aus", "es": "Apagado" }
+            },
+            {
+              "value": "frost",
+              "label": {
+                "en": "Frost protection",
+                "fr": "Hors-gel",
+                "de": "Frostschutz",
+                "es": "Antihielo"
+              }
+            }
+          ]
+        }
+      ],
+      "variables": [
+        {
+          "key": "device_name",
+          "type": "string",
+          "label": {
+            "en": "Radiator name",
+            "fr": "Nom du radiateur",
+            "de": "Name des Heizkörpers",
+            "es": "Nombre del radiador"
+          }
+        },
+        {
+          "key": "mode",
+          "type": "string",
+          "label": {
+            "en": "New mode",
+            "fr": "Nouveau mode",
+            "de": "Neuer Modus",
+            "es": "Nuevo modo"
+          }
+        },
+        {
+          "key": "previous_mode",
+          "type": "string",
+          "label": {
+            "en": "Previous mode",
+            "fr": "Mode précédent",
+            "de": "Vorheriger Modus",
+            "es": "Modo anterior"
+          }
+        }
+      ]
+    },
+    {
+      "key": "radiator_fault",
+      "label": {
+        "en": "Radiator fault",
+        "fr": "Défaut sur un radiateur",
+        "de": "Störung an einem Heizkörper",
+        "es": "Fallo en un radiador"
+      },
+      "description": {
+        "en": "A radiator reports a fault: temperature sensor, heating, or low thermostat battery.",
+        "fr": "Un radiateur signale un défaut : sonde de température, chauffe ou pile faible du thermostat.",
+        "de": "Ein Heizkörper meldet eine Störung: Temperaturfühler, Heizung oder schwache Thermostat-Batterie.",
+        "es": "Un radiador señala un fallo: sonda de temperatura, calefacción o pila baja del termostato."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": { "en": "Radiator", "fr": "Radiateur", "de": "Heizkörper", "es": "Radiador" }
+        },
+        {
+          "key": "fault",
+          "type": "multi_select",
+          "label": { "en": "Fault", "fr": "Défaut", "de": "Störung", "es": "Fallo" },
+          "options": [
+            {
+              "value": "temperature_sensor",
+              "label": {
+                "en": "Temperature sensor",
+                "fr": "Sonde de température",
+                "de": "Temperaturfühler",
+                "es": "Sonda de temperatura"
+              }
+            },
+            {
+              "value": "heating",
+              "label": { "en": "Heating", "fr": "Chauffe", "de": "Heizung", "es": "Calefacción" }
+            },
+            {
+              "value": "battery",
+              "label": {
+                "en": "Thermostat battery",
+                "fr": "Pile du thermostat",
+                "de": "Thermostat-Batterie",
+                "es": "Pila del termostato"
+              }
+            }
+          ]
+        }
+      ],
+      "variables": [
+        {
+          "key": "device_name",
+          "type": "string",
+          "label": {
+            "en": "Radiator name",
+            "fr": "Nom du radiateur",
+            "de": "Name des Heizkörpers",
+            "es": "Nombre del radiador"
+          }
+        },
+        {
+          "key": "fault",
+          "type": "string",
+          "label": {
+            "en": "Fault code",
+            "fr": "Code du défaut",
+            "de": "Störungscode",
+            "es": "Código del fallo"
+          }
+        },
+        {
+          "key": "fault_label",
+          "type": "string",
+          "label": {
+            "en": "Fault description",
+            "fr": "Description du défaut",
+            "de": "Beschreibung der Störung",
+            "es": "Descripción del fallo"
+          }
+        }
+      ]
+    },
+    {
+      "key": "connection_changed",
+      "label": {
+        "en": "Box connection changed",
+        "fr": "Connexion à la box modifiée",
+        "de": "Verbindung zur Box geändert",
+        "es": "Conexión con la box cambiada"
+      },
+      "description": {
+        "en": "The connection to the Eco Aterno box was lost, restored, or moved between local and cloud.",
+        "fr": "La connexion à la box Eco Aterno a été perdue, rétablie, ou a basculé entre local et cloud.",
+        "de": "Die Verbindung zur Eco-Aterno-Box wurde getrennt, wiederhergestellt oder zwischen lokal und Cloud gewechselt.",
+        "es": "La conexión con la box Eco Aterno se ha perdido, restablecido o ha cambiado entre local y nube."
+      },
+      "fields": [
+        {
+          "key": "status",
+          "type": "multi_select",
+          "label": {
+            "en": "New status",
+            "fr": "Nouvel état",
+            "de": "Neuer Status",
+            "es": "Nuevo estado"
+          },
+          "options": [
+            {
+              "value": "local",
+              "label": {
+                "en": "Connected locally",
+                "fr": "Connectée en local",
+                "de": "Lokal verbunden",
+                "es": "Conectada en local"
+              }
+            },
+            {
+              "value": "cloud",
+              "label": {
+                "en": "Connected through the cloud",
+                "fr": "Connectée par le cloud",
+                "de": "Über die Cloud verbunden",
+                "es": "Conectada por la nube"
+              }
+            },
+            {
+              "value": "unreachable",
+              "label": {
+                "en": "Unreachable",
+                "fr": "Injoignable",
+                "de": "Nicht erreichbar",
+                "es": "Inaccesible"
+              }
+            }
+          ]
+        }
+      ],
+      "variables": [
+        {
+          "key": "status",
+          "type": "string",
+          "label": {
+            "en": "New status",
+            "fr": "Nouvel état",
+            "de": "Neuer Status",
+            "es": "Nuevo estado"
+          }
+        },
+        {
+          "key": "previous_status",
+          "type": "string",
+          "label": {
+            "en": "Previous status",
+            "fr": "État précédent",
+            "de": "Vorheriger Status",
+            "es": "Estado anterior"
+          }
+        }
+      ]
+    }
+  ],
+  "scene_actions": [
+    {
+      "key": "set_temperature",
+      "label": {
+        "en": "Set the target temperature",
+        "fr": "Régler la température demandée",
+        "de": "Solltemperatur einstellen",
+        "es": "Ajustar la temperatura deseada"
+      },
+      "description": {
+        "en": "Sets the target temperature of one radiator, or of all of them when none is chosen.",
+        "fr": "Règle la température demandée d'un radiateur, ou de tous si aucun n'est choisi.",
+        "de": "Stellt die Solltemperatur eines Heizkörpers ein, oder aller, wenn keiner gewählt ist.",
+        "es": "Ajusta la temperatura deseada de un radiador, o de todos si no se elige ninguno."
+      },
+      "timeout_seconds": 60,
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Radiator (empty: all)",
+            "fr": "Radiateur (vide : tous)",
+            "de": "Heizkörper (leer: alle)",
+            "es": "Radiador (vacío: todos)"
+          }
+        },
+        {
+          "key": "temperature",
+          "type": "number",
+          "label": {
+            "en": "Temperature (°C)",
+            "fr": "Température (°C)",
+            "de": "Temperatur (°C)",
+            "es": "Temperatura (°C)"
+          },
+          "required": true,
+          "default": 19,
+          "min": 5,
+          "max": 30
+        }
+      ],
+      "outputs": [
+        {
+          "key": "updated",
+          "type": "number",
+          "label": {
+            "en": "Radiators updated",
+            "fr": "Radiateurs modifiés",
+            "de": "Geänderte Heizkörper",
+            "es": "Radiadores modificados"
+          }
+        }
+      ]
+    },
+    {
+      "key": "set_mode",
+      "label": {
+        "en": "Change the heating mode",
+        "fr": "Changer le mode de chauffage",
+        "de": "Heizmodus ändern",
+        "es": "Cambiar el modo de calefacción"
+      },
+      "description": {
+        "en": "Switches one radiator, or all of them, on, off or to frost protection.",
+        "fr": "Met un radiateur, ou tous, en marche, à l'arrêt ou en hors-gel.",
+        "de": "Schaltet einen Heizkörper oder alle ein, aus oder auf Frostschutz.",
+        "es": "Pone un radiador, o todos, en marcha, apagado o en antihielo."
+      },
+      "timeout_seconds": 60,
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Radiator (empty: all)",
+            "fr": "Radiateur (vide : tous)",
+            "de": "Heizkörper (leer: alle)",
+            "es": "Radiador (vacío: todos)"
+          }
+        },
+        {
+          "key": "mode",
+          "type": "select",
+          "label": { "en": "Mode", "fr": "Mode", "de": "Modus", "es": "Modo" },
+          "required": true,
+          "default": "heating",
+          "options": [
+            {
+              "value": "heating",
+              "label": { "en": "Heating", "fr": "En marche", "de": "Heizen", "es": "En marcha" }
+            },
+            {
+              "value": "off",
+              "label": { "en": "Off", "fr": "Arrêt", "de": "Aus", "es": "Apagado" }
+            },
+            {
+              "value": "frost",
+              "label": {
+                "en": "Frost protection",
+                "fr": "Hors-gel",
+                "de": "Frostschutz",
+                "es": "Antihielo"
+              }
+            }
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "key": "updated",
+          "type": "number",
+          "label": {
+            "en": "Radiators updated",
+            "fr": "Radiateurs modifiés",
+            "de": "Geänderte Heizkörper",
+            "es": "Radiadores modificados"
+          }
+        }
+      ]
+    },
+    {
+      "key": "set_boost",
+      "label": {
+        "en": "Start or stop the boost",
+        "fr": "Lancer ou arrêter le boost",
+        "de": "Boost starten oder beenden",
+        "es": "Iniciar o detener el boost"
+      },
+      "description": {
+        "en": "For the radiators that have a boost (bathroom models). The others are skipped.",
+        "fr": "Pour les radiateurs dotés d'un boost (modèles salle de bain). Les autres sont ignorés.",
+        "de": "Für Heizkörper mit Boost (Badmodelle). Die anderen werden übersprungen.",
+        "es": "Para los radiadores con boost (modelos de baño). Los demás se omiten."
+      },
+      "timeout_seconds": 60,
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Radiator (empty: all)",
+            "fr": "Radiateur (vide : tous)",
+            "de": "Heizkörper (leer: alle)",
+            "es": "Radiador (vacío: todos)"
+          }
+        },
+        {
+          "key": "state",
+          "type": "select",
+          "label": { "en": "Boost", "fr": "Boost", "de": "Boost", "es": "Boost" },
+          "required": true,
+          "default": "on",
+          "options": [
+            {
+              "value": "on",
+              "label": { "en": "Start", "fr": "Lancer", "de": "Starten", "es": "Iniciar" }
+            },
+            {
+              "value": "off",
+              "label": { "en": "Stop", "fr": "Arrêter", "de": "Beenden", "es": "Detener" }
+            }
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "key": "updated",
+          "type": "number",
+          "label": {
+            "en": "Radiators updated",
+            "fr": "Radiateurs modifiés",
+            "de": "Geänderte Heizkörper",
+            "es": "Radiadores modificados"
+          }
+        }
+      ]
+    },
+    {
+      "key": "refresh",
+      "label": {
+        "en": "Refresh the radiators",
+        "fr": "Actualiser les radiateurs",
+        "de": "Heizkörper aktualisieren",
+        "es": "Actualizar los radiadores"
+      },
+      "description": {
+        "en": "Reads every value again now, without waiting for the next periodic refresh.",
+        "fr": "Relit toutes les valeurs maintenant, sans attendre le prochain rafraîchissement.",
+        "de": "Liest alle Werte sofort neu ein, ohne auf die nächste Aktualisierung zu warten.",
+        "es": "Vuelve a leer todos los valores ahora, sin esperar a la próxima actualización."
+      },
+      "timeout_seconds": 30,
+      "outputs": [
+        {
+          "key": "radiators",
+          "type": "number",
+          "label": {
+            "en": "Number of radiators",
+            "fr": "Nombre de radiateurs",
+            "de": "Anzahl der Heizkörper",
+            "es": "Número de radiadores"
+          }
+        },
+        {
+          "key": "connection",
+          "type": "string",
+          "label": {
+            "en": "Connection (local, cloud)",
+            "fr": "Connexion (local, cloud)",
+            "de": "Verbindung (local, cloud)",
+            "es": "Conexión (local, cloud)"
+          }
+        }
+      ]
+    }
+  ],
+  "widgets": [
+    {
+      "key": "aterno_overview",
+      "label": {
+        "en": "Aterno heating",
+        "fr": "Chauffage Aterno",
+        "de": "Aterno-Heizung",
+        "es": "Calefacción Aterno"
+      },
+      "description": {
+        "en": "Radiators heating, average temperature, connection, and buttons acting on all radiators.",
+        "fr": "Radiateurs en marche, température moyenne, connexion et boutons agissant sur tous.",
+        "de": "Heizende Heizkörper, Mitteltemperatur, Verbindung und Tasten für alle Heizkörper.",
+        "es": "Radiadores en marcha, temperatura media, conexión y botones para todos."
+      },
+      "icon": "thermometer",
+      "action_timeout_seconds": 60
+    },
+    {
+      "key": "aterno_radiator",
+      "label": {
+        "en": "Aterno radiator",
+        "fr": "Radiateur Aterno",
+        "de": "Aterno-Heizkörper",
+        "es": "Radiador Aterno"
+      },
+      "description": {
+        "en": "One radiator: live temperatures, mode, window, and quick actions.",
+        "fr": "Un radiateur : températures en direct, mode, fenêtre et actions rapides.",
+        "de": "Ein Heizkörper: Live-Temperaturen, Modus, Fenster und Schnellaktionen.",
+        "es": "Un radiador: temperaturas en directo, modo, ventana y acciones rápidas."
+      },
+      "icon": "sun",
+      "settings": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": { "en": "Radiator", "fr": "Radiateur", "de": "Heizkörper", "es": "Radiador" },
+          "required": true
+        }
+      ],
+      "action_timeout_seconds": 30
+    }
+  ]
+}
