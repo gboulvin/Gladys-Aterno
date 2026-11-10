@@ -1,6 +1,6 @@
 {
   "name": "gladys-aterno",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Aterno integration for Gladys Assistant: control Aterno radiators through the Eco Aterno box.",
   "type": "module",

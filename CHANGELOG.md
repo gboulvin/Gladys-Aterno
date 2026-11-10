@@ -10,6 +10,8 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-11-10
+
 First version of the Aterno integration. It is covered by tests against a
 simulated box but has not been run on a physical Eco Aterno box yet: feedback
 on real hardware is welcome.
@@ -37,4 +39,5 @@ on real hardware is welcome.
 - English, French, German and Spanish: manifest, messages and user
   documentation.
 
-[Unreleased]: https://github.com/gboulvin/Gladys-Aterno/commits/main
+[Unreleased]: https://github.com/gboulvin/Gladys-Aterno/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/gboulvin/Gladys-Aterno/releases/tag/v0.1.0
