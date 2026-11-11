@@ -10,6 +10,8 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-11
+
 ### Added
 
 - The integration finds the Eco Aterno box on the local network by itself:
@@ -56,5 +58,6 @@ on real hardware is welcome.
 - English, French, German and Spanish: manifest, messages and user
   documentation.
 
-[Unreleased]: https://github.com/gboulvin/Gladys-Aterno/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/gboulvin/Gladys-Aterno/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/gboulvin/Gladys-Aterno/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/gboulvin/Gladys-Aterno/releases/tag/v0.1.0
