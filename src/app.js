@@ -10,6 +10,7 @@
 import { createLogger, logger as defaultLogger } from '@gladysassistant/integration-sdk';
 import { AternoBridge, REASON, UNREACHABLE } from './bridge.js';
 import { DEFAULT_CONFIG, isConfigured, normalizeConfig, sameConnection } from './config.js';
+import { createDiscovery } from './discovery.js';
 import {
   FEATURE,
   buildDevice,
@@ -34,11 +35,20 @@ export const ACTION = { TEST_CONNECTION: 'test_connection', REFRESH_DEVICES: 're
 
 export function createApp(
   gladys,
-  { createClient = (options) => new TydomClient(options), logger = defaultLogger, ...timing } = {},
+  {
+    createClient = (options) => new TydomClient(options),
+    logger = defaultLogger,
+    discoveryInterval,
+    ...timing
+  } = {},
 ) {
+  const boxLogger = logger === defaultLogger ? createLogger({ name: 'box' }) : logger;
   const bridge = new AternoBridge({
     createClient,
-    logger: logger === defaultLogger ? createLogger({ name: 'box' }) : logger,
+    // Finds the box on the local network through Gladys (mDNS), when no
+    // address is entered or the entered one stopped answering.
+    discover: createDiscovery(gladys, { logger: boxLogger, minIntervalMs: discoveryInterval }),
+    logger: boxLogger,
     ...timing,
   });
 
@@ -139,7 +149,9 @@ export function createApp(
   });
 
   bridge.on('status', (status, previous) => {
-    logger.info(`Box connection: ${status.transport}${status.reason ? ` (${status.reason})` : ''}`);
+    const where = bridge.localHost ? ` at ${bridge.localHost}` : '';
+    const why = status.reason ? ` (${status.reason})` : '';
+    logger.info(`Box connection: ${status.transport}${where}${why}`);
     safely('Publishing the connection status', publishConnectionStatus);
     safely('Publishing the transports', publishTransports);
     // The very first status only says the integration started: not an event.
@@ -202,11 +214,21 @@ export function createApp(
     if (transport === UNREACHABLE) {
       return t(`status.${reason ?? REASON.UNREACHABLE}`);
     }
-    return t('action.test.ok', {
+    const vars = {
       transport: t(`transport.${transport}`),
       product: bridge.info?.productName ?? 'Eco Aterno',
       count: bridge.radiators.size,
-    });
+      address: bridge.localHost,
+    };
+    if (!bridge.localHost) {
+      return t('action.test.ok', vars);
+    }
+    // An address found on the network is worth telling: the user can reserve
+    // it in the router, or enter it to skip the search.
+    return t(
+      bridge.localHost === app.config.host ? 'action.test.ok_local' : 'action.test.ok_discovered',
+      vars,
+    );
   });
 
   gladys.onAction(ACTION.REFRESH_DEVICES, async () => {

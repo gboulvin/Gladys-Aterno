@@ -227,6 +227,7 @@ test('reads the values back after a command, in case a push was missed', async (
 
 test('a restart during an attempt leaves a single connection', async () => {
   const box = createFakeBox();
+  box.localAddress = '192.168.1.60';
   const { bridge } = bridgeFor(box);
   const first = bridge.start(config());
   await bridge.start(config({ host: '192.168.1.60' }));

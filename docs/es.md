@@ -42,8 +42,8 @@ aparecen en Gladys en unos segundos: la box los comunica en directo.
 2. Introduzca la **dirección MAC** de la box. Los separadores (`:` o `-`) se
    ignoran.
 3. Introduzca la **contraseña** de la box.
-4. Opcional pero recomendado: introduzca la **dirección IP local** de la box
-   (véase más abajo).
+4. Opcional: introduzca la **dirección IP local** de la box. Si se deja
+   vacía, la integración busca la box en su red (véase más abajo).
 5. Guarde y pulse **Probar la conexión**: la respuesta indica el canal usado
    y cuántos radiadores se han encontrado.
 6. Abra la pestaña **Descubrimiento** y añada sus radiadores.
@@ -56,18 +56,28 @@ creadas a partir de entonces; después puede renombrar lo que quiera en Gladys.
 Se puede acceder a la box de dos formas, y la integración gestiona ambas:
 
 - **Local**: directamente por su red doméstica. Más rápido, y sigue
-  funcionando cuando su acceso a Internet falla. Necesita la dirección IP
-  local de la box: búsquela en la lista de dispositivos conectados de su
-  router y resérvela allí (una «asignación DHCP estática») para que nunca
-  cambie.
+  funcionando cuando su acceso a Internet falla.
 - **Nube**: a través del relé del fabricante, como la aplicación móvil fuera
   de casa. Nada que configurar, pero hace falta Internet en ambos lados.
 
-Con la dirección rellenada, la opción **Preferir la conexión local** decide
-qué canal se prueba primero. Si el canal preferido no responde, la
-integración usa el otro y lo indica: la insignia de los radiadores muestra un
-punto naranja, con el motivo en su descripción emergente. Vuelve por sí sola
-al canal preferido en cuanto este responde de nuevo.
+No hace falta buscar la dirección de la box: si el campo **dirección IP
+local** se deja vacío, la integración pide a Gladys que busque la box en su
+red (como hace la aplicación Eco Aterno en casa), comprueba que es la suya
+con la dirección MAC y la contraseña, y se conecta en local. Si su router le
+asigna más adelante otra dirección, la integración la vuelve a encontrar por
+sí sola. Si no se encuentra la box, pasa por la nube.
+
+Aun así puede introducir la dirección, por ejemplo si la búsqueda no
+encuentra nada en su red: búsquela en la lista de dispositivos conectados de
+su router y resérvela allí (una «asignación DHCP estática») para que nunca
+cambie. Una dirección introducida a mano se prueba primero; si deja de
+responder, la búsqueda toma el relevo.
+
+La opción **Preferir la conexión local** decide qué canal se prueba primero.
+Si el canal preferido no responde, la integración usa el otro y lo indica:
+la insignia de los radiadores muestra un punto naranja, con el motivo en su
+descripción emergente. Vuelve por sí sola al canal preferido en cuanto este
+responde de nuevo.
 
 ### Acciones
 
@@ -129,12 +139,13 @@ nueva contraseña en la aplicación Eco Aterno.
 
 **«No se puede acceder a la box Eco Aterno.»** Mire el piloto de la box:
 verde fijo significa accesible en local y a distancia; naranja, solo en
-local; rojo, sin conexión a Internet. Sin dirección IP local en la
-configuración, la integración necesita el piloto verde.
+local; rojo, sin conexión a Internet. Si tampoco se puede acceder a la
+box en la red local, la integración necesita el piloto verde.
 
 **La insignia indica «nube» con un punto naranja.** La box no ha respondido
-en la dirección IP local: probablemente ha cambiado. Compruébela en su router
-y resérvela.
+en la red local y la búsqueda no la ha vuelto a encontrar. Compruebe que la
+box y Gladys están en la misma red e introduzca después su dirección a mano
+(véase «Local o nube»).
 
 **Falta un radiador.** Asócielo primero en la aplicación Eco Aterno y pulse
 después **Buscar nuevos radiadores**.

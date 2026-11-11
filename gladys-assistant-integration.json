@@ -14,6 +14,10 @@
   "cover_image": "https://raw.githubusercontent.com/gboulvin/Gladys-Aterno/main/cover.jpg",
   "categories": ["climate"],
   "transports": ["local", "cloud"],
+  "network_discovery": [
+    { "type": "mdns", "service": "_https._tcp" },
+    { "type": "mdns", "service": "_http._tcp" }
+  ],
   "config_schema": [
     {
       "key": "intro",
@@ -81,10 +85,10 @@
         "es": "Dirección IP local de la box"
       },
       "description": {
-        "en": "Optional. Fill it in to control the radiators over your local network, without Internet. Left empty, the integration goes through the cloud.",
-        "fr": "Facultatif. Renseignez-la pour piloter les radiateurs par votre réseau local, sans Internet. Laissée vide, l'intégration passe par le cloud.",
-        "de": "Optional. Tragen Sie sie ein, um die Heizkörper über Ihr lokales Netz zu steuern, ohne Internet. Bleibt das Feld leer, läuft die Integration über die Cloud.",
-        "es": "Opcional. Rellénela para controlar los radiadores por su red local, sin Internet. Si se deja vacía, la integración pasa por la nube."
+        "en": "Optional. Left empty, the integration looks for the box on your local network by itself, and goes through the cloud if it does not find it. Fill it in to skip the search.",
+        "fr": "Facultatif. Laissée vide, l'intégration cherche elle-même la box sur votre réseau local, et passe par le cloud si elle ne la trouve pas. Renseignez-la pour éviter la recherche.",
+        "de": "Optional. Bleibt das Feld leer, sucht die Integration die Box selbst in Ihrem lokalen Netz und nutzt die Cloud, wenn sie sie nicht findet. Tragen Sie sie ein, um die Suche zu überspringen.",
+        "es": "Opcional. Si se deja vacía, la integración busca por sí sola la box en su red local y pasa por la nube si no la encuentra. Rellénela para evitar la búsqueda."
       },
       "placeholder": {
         "en": "e.g. 192.168.1.50",

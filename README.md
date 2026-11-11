@@ -12,9 +12,13 @@ network or through the cloud.
 - One Gladys device per radiator paired with the box: target temperature,
   room temperature, heating on/off, frost protection, boost (bathroom
   models), open-window detection, presence detection.
-- **Local and cloud**: local network first when the address of the box is
-  known, cloud relay otherwise, automatic fallback with a "degraded" badge,
-  automatic return to the preferred channel.
+- **Local and cloud**: local network first, cloud relay otherwise, automatic
+  fallback with a "degraded" badge, automatic return to the preferred
+  channel.
+- **Finds the box by itself**: no IP address to enter — Gladys looks for the
+  box on the network (mDNS), the integration checks it is the right one with
+  the MAC address and the password, and finds it again when its address
+  changes.
 - **Live updates**: the box pushes every change (app, thermostat) as it
   happens; a periodic full read is the safety net.
 - **Scene triggers**: radiator mode changed, radiator fault, box connection
@@ -66,6 +70,7 @@ src/scenes.js                     scene triggers and scene actions
 src/widgets.js                    dashboard widgets
 src/i18n.js                       runtime texts in en / fr / de / es
 src/config.js                     defaults + normalization of the configuration
+src/discovery.js                  finds the box on the local network (mDNS, through Gladys)
 src/tydom/client.js               WebSocket client of the box (local + cloud)
 src/tydom/protocol.js             HTTP-over-WebSocket framing
 src/tydom/digest.js               HTTP Digest authentication
@@ -78,14 +83,22 @@ test/                             node --test: fake Gladys (SDK) + simulated box
 
 Version 0.x. The integration is covered by tests end to end — the real
 WebSocket client against a local server speaking the protocol, the whole
-integration against the fake Gladys of the SDK and a simulated box — but it
-has **not yet been run against a physical Eco Aterno box**. What that leaves
-open:
+integration against the fake Gladys of the SDK and a simulated box.
 
+**Reported working on real hardware** (version 0.1.0, one user): the
+connection to an Eco Aterno box **through the cloud**, the discovery of its
+two radiators, and a command sent from the dashboard widget ("all frost
+protection").
+
+Still open, because nobody reported on it yet:
+
+- the **local connection** (legacy TLS, self-signed certificate: handled the
+  way the reference projects do);
+- the **automatic search of the box** on the network: the service type and
+  name it announces come from what the Eco Aterno app looks for (mDNS,
+  `_http._tcp` / `_https._tcp`, `TYDOM-…`), not from a box seen answering;
 - the exact set of values an Aterno receiver reports (the integration only
   exposes what the box declares, and only writes what it declares writable);
-- the TLS handshake with the box on the local network (legacy TLS,
-  self-signed certificate: handled the way the reference projects do);
 - the older My Aterno box.
 
 If you run it on real hardware, please open an issue with the integration

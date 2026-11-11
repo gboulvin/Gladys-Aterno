@@ -40,8 +40,8 @@ within seconds: the box reports them as they happen.
 1. Open the **Configuration** tab of the integration.
 2. Enter the **MAC address** of the box. Separators (`:` or `-`) are ignored.
 3. Enter the **password** of the box.
-4. Optional but recommended: enter the **local IP address** of the box (see
-   below).
+4. Optional: enter the **local IP address** of the box. Left empty, the
+   integration looks for the box on your network (see below).
 5. Save, then press **Test the connection**: the answer tells which channel
    is used and how many radiators were found.
 6. Open the **Discovery** tab and add your radiators.
@@ -54,17 +54,27 @@ from then on; rename anything you like in Gladys afterwards.
 The box can be reached two ways, and the integration handles both:
 
 - **Local** — directly over your home network. Faster, and it keeps working
-  when your Internet access is down. It needs the local IP address of the
-  box: find it in the list of connected devices of your router, and reserve
-  it there (a "static DHCP lease") so it never changes.
+  when your Internet access is down.
 - **Cloud** — through the manufacturer's relay, like the mobile app away
   from home. Nothing to configure, but it needs Internet on both sides.
 
-With the address filled in, the **Prefer the local connection** toggle
-decides which one is tried first. If the preferred channel does not answer,
-the integration uses the other one and says so: the badge of the radiators
-shows an orange dot, with the reason in its tooltip. It returns to the
-preferred channel by itself once it answers again.
+You do not have to find the address of the box: with the **local IP
+address** field left empty, the integration asks Gladys to look for the box
+on your network (the way the Eco Aterno app finds it at home), checks it is
+yours with the MAC address and the password, and connects locally. If the
+box later gets another address from your router, the integration finds it
+again by itself. When the box cannot be found, it goes through the cloud.
+
+You can still enter the address, for instance if the search finds nothing on
+your network: find it in the list of connected devices of your router, and
+reserve it there (a "static DHCP lease") so it never changes. An address
+entered by hand is tried first; if it stops answering, the search takes over.
+
+The **Prefer the local connection** toggle decides which one is tried first.
+If the preferred channel does not answer, the integration uses the other one
+and says so: the badge of the radiators shows an orange dot, with the reason
+in its tooltip. It returns to the preferred channel by itself once it
+answers again.
 
 ### Actions
 
@@ -122,12 +132,13 @@ magenta quickly), then choose a new password in the Eco Aterno app.
 
 **"The Eco Aterno box cannot be reached."** Look at the light of the box:
 steady green means reachable locally and remotely, orange means locally
-only, red means no Internet connection. Without a local IP address in the
-configuration, the integration needs the green light.
+only, red means no Internet connection. When the box cannot be reached on
+the local network either, the integration needs the green light.
 
-**The badge shows "cloud" with an orange dot.** The box did not answer at
-the local IP address: it probably changed. Check it in your router and
-reserve it.
+**The badge shows "cloud" with an orange dot.** The box did not answer on
+the local network, and the search did not find it again. Check that the box
+and Gladys are on the same network, then enter its address by hand (see
+"Local or cloud").
 
 **A radiator is missing.** Pair it in the Eco Aterno app first, then press
 **Look for new radiators**.

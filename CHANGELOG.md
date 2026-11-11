@@ -10,6 +10,23 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+### Added
+
+- The integration finds the Eco Aterno box on the local network by itself:
+  with the local IP address left empty, Gladys looks for the box (mDNS), the
+  integration checks it is yours with the MAC address and the password, and
+  connects locally instead of through the cloud. Gladys shows this network
+  search on the install screen of the new version.
+- When the box gets a new address from the router, the integration finds it
+  again and stays local. An address entered by hand that stops answering is
+  worked around the same way, with a hint in the logs to update it.
+- "Test the connection" tells the local address in use, and suggests
+  reserving it in the router when it was found automatically.
+
+### Changed
+
+- The logs tell the address of the box when connected locally.
+
 ## [0.1.0] - 2026-11-10
 
 First version of the Aterno integration. It is covered by tests against a

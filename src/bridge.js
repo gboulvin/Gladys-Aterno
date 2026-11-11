@@ -67,11 +67,19 @@ export class AternoBridge extends EventEmitter {
   /**
    * @param {object} options
    * @param {(options: object) => import('./tydom/client.js').TydomClient} options.createClient
+   * @param {(config: object) => Promise<string[]>} [options.discover] finds the
+   *   address(es) of the box on the local network (src/discovery.js)
    * @param {object} [options.logger]
    */
-  constructor({ createClient, logger, ...timing }) {
+  constructor({ createClient, discover, logger, ...timing }) {
     super();
     this.createClient = createClient;
+    this.discover = discover;
+    // Address of the box found on the network, kept across reconnections:
+    // tried first next time, and searched again only when it stops answering.
+    this.discoveredHost = null;
+    // Address of the box behind the current local connection (null on cloud).
+    this.localHost = null;
     this.logger = logger;
     this.timing = { ...DEFAULTS, ...timing };
     this.config = null;
@@ -134,15 +142,72 @@ export class AternoBridge extends EventEmitter {
 
   // --- Connection ------------------------------------------------------------
 
-  // Channels to try, preferred first. Local needs the address of the box.
-  channels() {
-    const { host, mediation_host: mediationHost, GLADYS_PREFER_LOCAL: preferLocal } = this.config;
-    const cloud = { transport: TRANSPORT.CLOUD, host: mediationHost };
-    if (!host) {
-      return [cloud];
+  cloudChannel() {
+    return { transport: TRANSPORT.CLOUD, host: this.config.mediation_host };
+  }
+
+  // Local channels, lazily: the address the user entered, then the one found
+  // last time, then — only if those do not answer — a fresh search of the
+  // network. Lazy, so a working address never costs a scan.
+  async *localChannels() {
+    const tried = new Set();
+    for (const host of [this.config.host, this.discoveredHost]) {
+      if (host && !tried.has(host)) {
+        tried.add(host);
+        yield { transport: TRANSPORT.LOCAL, host, discovered: host !== this.config.host };
+      }
     }
-    const local = { transport: TRANSPORT.LOCAL, host };
-    return preferLocal ? [local, cloud] : [cloud, local];
+    if (!this.discover) {
+      return;
+    }
+    const found = await Promise.resolve()
+      .then(() => this.discover(this.config))
+      .catch(() => []);
+    for (const host of found) {
+      if (!tried.has(host)) {
+        tried.add(host);
+        yield { transport: TRANSPORT.LOCAL, host, discovered: true };
+      }
+    }
+  }
+
+  // Every channel to try, preferred first.
+  async *channels() {
+    if (this.config.GLADYS_PREFER_LOCAL) {
+      yield* this.localChannels();
+      yield this.cloudChannel();
+    } else {
+      yield this.cloudChannel();
+      yield* this.localChannels();
+    }
+  }
+
+  // The channels of the preferred transport only (to move back to it).
+  preferredChannels() {
+    if (this.config.GLADYS_PREFER_LOCAL) {
+      return this.localChannels();
+    }
+    return (async function* (channel) {
+      yield channel;
+    })(this.cloudChannel());
+  }
+
+  // Remember where the box answered.
+  noteChannel(channel) {
+    this.localHost = channel.transport === TRANSPORT.LOCAL ? channel.host : null;
+    if (channel.transport !== TRANSPORT.LOCAL || !channel.discovered) {
+      return;
+    }
+    if (this.discoveredHost !== channel.host) {
+      this.discoveredHost = channel.host;
+      this.logger?.info(`Box found on the local network at ${channel.host}`);
+    }
+    if (this.config.host) {
+      this.logger?.warn(
+        `The box no longer answers at ${this.config.host} but does at ${channel.host}: ` +
+          'update the local IP address in the configuration, or leave it empty',
+      );
+    }
   }
 
   /** One round of attempts over the channels. Never throws. */
@@ -161,10 +226,17 @@ export class AternoBridge extends EventEmitter {
   async connectRound() {
     clearTimeout(this.timers.retry);
     const generation = this.generation;
-    const channels = this.channels();
+    const preferred = this.config.GLADYS_PREFER_LOCAL ? TRANSPORT.LOCAL : TRANSPORT.CLOUD;
+    // The fallback is "degraded" only when the preferred transport was
+    // actually tried: without any local address known or found, the cloud is
+    // the nominal channel, not a fallback.
+    let preferredFailed = false;
     let failure = REASON.UNREACHABLE;
 
-    for (const [index, channel] of channels.entries()) {
+    for await (const channel of this.channels()) {
+      if (generation !== this.generation) {
+        return;
+      }
       try {
         const client = await this.open(channel);
         if (generation !== this.generation) {
@@ -177,17 +249,24 @@ export class AternoBridge extends EventEmitter {
           return;
         }
         this.attempts = 0;
-        const degraded = index > 0;
+        this.noteChannel(channel);
+        const degraded = channel.transport !== preferred && preferredFailed;
         this.setStatus({
           transport: channel.transport,
           degraded,
           reason: degraded
-            ? channels[0].transport === TRANSPORT.LOCAL
+            ? preferred === TRANSPORT.LOCAL
               ? REASON.LOCAL_FAILED
               : REASON.CLOUD_FAILED
             : null,
         });
-        this.schedulePreferredRetry(degraded);
+        // On the cloud while local is preferred — degraded, or simply because
+        // no box was found yet — keep looking for the box from time to time.
+        const keepLooking =
+          channel.transport === TRANSPORT.CLOUD &&
+          preferred === TRANSPORT.LOCAL &&
+          Boolean(this.discover);
+        this.schedulePreferredRetry(degraded || keepLooking);
         this.scheduleRefresh();
         return;
       } catch (err) {
@@ -195,7 +274,12 @@ export class AternoBridge extends EventEmitter {
           return;
         }
         this.dropClient();
-        this.logger?.warn(`Connection through ${channel.transport} failed: ${err.message}`);
+        if (channel.transport === preferred) {
+          preferredFailed = true;
+        }
+        this.logger?.warn(
+          `Connection through ${channel.transport} (${channel.host}) failed: ${err.message}`,
+        );
         if (err instanceof TydomAuthError) {
           // The credentials are the same on both channels: do not insist.
           failure = REASON.AUTH;
@@ -231,6 +315,7 @@ export class AternoBridge extends EventEmitter {
         return;
       }
       this.client = null;
+      this.localHost = null;
       this.logger?.warn('Connection to the box lost');
       if (this.running) {
         this.setStatus({ transport: UNREACHABLE, degraded: false, reason: REASON.UNREACHABLE });
@@ -258,21 +343,27 @@ export class AternoBridge extends EventEmitter {
     }
     this.timers.preferred = setTimeout(async () => {
       const generation = this.generation;
-      const [preferred] = this.channels();
-      try {
-        const client = await this.open(preferred);
+      for await (const channel of this.preferredChannels()) {
         if (generation !== this.generation) {
-          client.close();
           return;
         }
-        this.adopt(client);
-        this.setStatus({ transport: preferred.transport, degraded: false, reason: null });
-        await this.refresh().catch(() => {});
-      } catch (err) {
-        this.logger?.debug(`Preferred channel still unavailable: ${err.message}`);
-        if (generation === this.generation && this.connected) {
-          this.schedulePreferredRetry(true);
+        try {
+          const client = await this.open(channel);
+          if (generation !== this.generation) {
+            client.close();
+            return;
+          }
+          this.adopt(client);
+          this.noteChannel(channel);
+          this.setStatus({ transport: channel.transport, degraded: false, reason: null });
+          await this.refresh().catch(() => {});
+          return;
+        } catch (err) {
+          this.logger?.debug(`Preferred channel still unavailable: ${err.message}`);
         }
+      }
+      if (generation === this.generation && this.connected) {
+        this.schedulePreferredRetry(true);
       }
     }, this.timing.preferredRetryDelay);
     this.timers.preferred.unref?.();

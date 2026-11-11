@@ -132,6 +132,18 @@ const MESSAGES = {
     de: 'Verbunden ({transport}) mit {product}: {count} Heizkörper gefunden.',
     es: 'Conectado ({transport}) a {product}: {count} radiador(es) encontrado(s).',
   },
+  'action.test.ok_local': {
+    en: 'Connected locally to {product} at {address}: {count} radiator(s) found.',
+    fr: 'Connecté en local à {product} ({address}) : {count} radiateur(s) trouvé(s).',
+    de: 'Lokal mit {product} ({address}) verbunden: {count} Heizkörper gefunden.',
+    es: 'Conectado en local a {product} ({address}): {count} radiador(es) encontrado(s).',
+  },
+  'action.test.ok_discovered': {
+    en: 'Connected locally to {product}, found on your network at {address}: {count} radiator(s) found. Reserve this address in your router so it never changes.',
+    fr: "Connecté en local à {product}, trouvée sur votre réseau à l'adresse {address} : {count} radiateur(s) trouvé(s). Réservez cette adresse dans votre box Internet pour qu'elle ne change pas.",
+    de: 'Lokal mit {product} verbunden, in Ihrem Netz unter {address} gefunden: {count} Heizkörper gefunden. Reservieren Sie diese Adresse in Ihrem Router, damit sie sich nicht ändert.',
+    es: 'Conectado en local a {product}, encontrada en su red en {address}: {count} radiador(es) encontrado(s). Reserve esta dirección en su router para que no cambie.',
+  },
   'action.refresh.ok': {
     en: '{count} radiator(s) on the box. New ones are waiting in the Discovery tab.',
     fr: "{count} radiateur(s) sur la box. Les nouveaux vous attendent dans l'onglet Découverte.",

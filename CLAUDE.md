@@ -43,6 +43,7 @@ src/scenes.js                     scene triggers (fired) and scene actions (hand
 src/widgets.js                    dashboard widgets
 src/i18n.js                       runtime texts, en / fr / de / es
 src/config.js                     DEFAULT_CONFIG (mirrors the manifest defaults) + normalization
+src/discovery.js                  finds the box on the LAN: mDNS scan through Gladys (scanNetwork)
 src/tydom/client.js               WebSocket client of the box, local + cloud
 src/tydom/protocol.js             HTTP-over-WebSocket framing (build / parse)
 src/tydom/digest.js               HTTP Digest authentication
@@ -64,11 +65,21 @@ knows nothing about Gladys, `radiators.js` does no I/O.
   exists only if the endpoint carries the matching value, and a value is only
   written when the box declares it writable (`radiators.js`: `capabilities`,
   `writable`). Do not assume a value exists on every receiver.
-- **Not verified on hardware yet.** The protocol comes from the open-source
-  Tydom implementations listed in the README, not from a vendor document.
+- **Partly verified on hardware.** The protocol comes from the open-source
+  Tydom implementations listed in the README, not from a vendor document. A
+  user reported the cloud connection, the radiator list and a widget command
+  working; the local connection and the mDNS search are not confirmed yet.
   When changing a command or a value name, check it against them, keep the
   README "Status" section honest, and never present a behaviour as confirmed
   on a physical box unless someone reported it.
+- **Local discovery.** The container cannot see mDNS: the scan goes through
+  Gladys (`gladys.scanNetwork('mdns')`) and only browses the service types
+  declared in the manifest `network_discovery` (`MDNS_SERVICES` in
+  `src/discovery.js`, kept in sync by `test/manifest.test.js`). A discovered
+  address is used only once the box there accepted the MAC address and the
+  password. Scans are spaced (one per minute at most): a box that is down must
+  not make every retry scan the network. An address that answers is never
+  replaced by a scan.
 - **External ids are forever.** They are built in `devices.js` from the MAC
   address of the box and the device/endpoint ids
   (`gladys.externalIds('radiator', '<mac>-<deviceId>-<endpointId>')`), never

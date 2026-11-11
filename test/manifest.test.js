@@ -10,6 +10,7 @@ import { readFile } from 'node:fs/promises';
 import { createFakeGladys } from '@gladysassistant/integration-sdk/testing';
 import { ACTION, createApp } from '../src/app.js';
 import { DEFAULT_CONFIG, LANGUAGES } from '../src/config.js';
+import { MDNS_SERVICES } from '../src/discovery.js';
 import { FAULTS, MODE } from '../src/radiators.js';
 import { SCENE_ACTIONS, SCENE_TRIGGER_KEYS } from '../src/scenes.js';
 import { WIDGETS } from '../src/widgets.js';
@@ -88,6 +89,14 @@ test('both transports are declared: Gladys shows its "prefer local" toggle', () 
   assert.deepEqual(manifest.transports, ['local', 'cloud']);
   // The reserved key is Gladys' own: never in the schema.
   assert.ok(!keysOf(manifest.config_schema).includes('GLADYS_PREFER_LOCAL'));
+});
+
+test('the mDNS services the code browses are the ones declared to Gladys', () => {
+  // An undeclared capture is refused by the core with a 403.
+  assert.deepEqual(
+    manifest.network_discovery.map(({ type, service }) => [type, service]),
+    MDNS_SERVICES.map((service) => ['mdns', service]),
+  );
 });
 
 test('every scene_actions key has an onSceneAction handler, and vice versa', () => {

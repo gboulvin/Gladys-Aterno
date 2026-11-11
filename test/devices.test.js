@@ -244,8 +244,14 @@ test('the Configuration screen actions answer in four languages', async () => {
   const { gladys, box, stop } = await startApp();
   const test = await gladys.fake.action('test_connection');
   assert.equal(test.success, true);
-  assert.equal(test.data.message.en, 'Connected (Local) to TYDOM1: 2 radiator(s) found.');
-  assert.equal(test.data.message.fr, 'Connecté (Locale) à TYDOM1 : 2 radiateur(s) trouvé(s).');
+  assert.equal(
+    test.data.message.en,
+    'Connected locally to TYDOM1 at 192.168.1.50: 2 radiator(s) found.',
+  );
+  assert.equal(
+    test.data.message.fr,
+    'Connecté en local à TYDOM1 (192.168.1.50) : 2 radiateur(s) trouvé(s).',
+  );
   assert.deepEqual(Object.keys(test.data.message), ['en', 'fr', 'de', 'es']);
 
   const refresh = await gladys.fake.action('refresh_devices');

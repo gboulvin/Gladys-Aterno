@@ -36,11 +36,21 @@ Gladys before reporting a problem.
 - **The local connection.** The Eco Aterno box only serves a self-signed
   certificate on the local network and an older TLS configuration, so the
   integration does **not** verify the certificate of the box and accepts
-  legacy TLS parameters — for the local channel only, and only toward the
-  address entered in the configuration. Someone able to impersonate that
-  address on your home network could answer in place of the box; they would
-  not obtain the password (see above). Leave the local IP address empty to
-  use the cloud relay only.
+  legacy TLS parameters — for the local channel only, toward the address
+  entered in the configuration or found by the local search (below).
+  Someone able to impersonate the box on your home network could answer in
+  its place and send false values. They would not receive the password
+  itself, but the Digest answer computed from it, which allows an offline
+  guessing attempt: choose a password that is not short or common.
+- **The local search.** When no local address answers, the integration asks
+  Gladys to look for the box by mDNS (declared in the manifest
+  `network_discovery`, shown on the install screen). Any device of your home
+  network can answer such a search; the integration only keeps an address
+  whose box accepted the MAC address and the password, which rules out a
+  neighbouring Tydom box but not a device built to impersonate one (see the
+  previous point). To avoid the local channel entirely, turn off "Prefer the
+  local connection": the local channel, search included, is then only tried
+  when the cloud relay does not answer.
 - **The cloud connection.** The certificate of the relay is verified like any
   other HTTPS host. The relay belongs to the manufacturer of the box; the
   integration sends it the same requests the Eco Aterno app does.

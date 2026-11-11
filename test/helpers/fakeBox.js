@@ -79,8 +79,9 @@ export function createFakeBox({ radiators = defaultRadiators(), password = PASSW
   const box = {
     radiators,
     password,
-    // Channels that currently answer.
+    // Channels that currently answer, and the address of the box on the LAN.
     reachable: { local: true, cloud: true },
+    localAddress: '192.168.1.50',
     // Every client created, every request received (`{ transport, method, url, body }`).
     clients: [],
     requests: [],
@@ -218,7 +219,8 @@ class FakeClient extends EventEmitter {
   }
 
   async connect() {
-    if (!this.box.reachable[this.transport]) {
+    const wrongAddress = this.transport === 'local' && this.options.host !== this.box.localAddress;
+    if (!this.box.reachable[this.transport] || wrongAddress) {
       throw new Error(`connect ECONNREFUSED ${this.options.host}`);
     }
     if (this.options.password !== this.box.password || this.options.mac !== MAC) {

@@ -43,8 +43,8 @@ en direct.
 2. Saisissez l'**adresse MAC** de la box. Les séparateurs (`:` ou `-`) sont
    ignorés.
 3. Saisissez le **mot de passe** de la box.
-4. Facultatif mais conseillé : saisissez l'**adresse IP locale** de la box
-   (voir ci-dessous).
+4. Facultatif : saisissez l'**adresse IP locale** de la box. Laissée vide,
+   l'intégration cherche la box sur votre réseau (voir ci-dessous).
 5. Enregistrez, puis appuyez sur **Tester la connexion** : la réponse indique
    le canal utilisé et le nombre de radiateurs trouvés.
 6. Ouvrez l'onglet **Découverte** et ajoutez vos radiateurs.
@@ -57,18 +57,29 @@ créées ensuite ; renommez ce que vous voulez dans Gladys par la suite.
 La box est joignable de deux façons, et l'intégration gère les deux :
 
 - **Local** — directement par votre réseau domestique. Plus rapide, et cela
-  continue de fonctionner quand votre accès Internet est coupé. Il faut
-  l'adresse IP locale de la box : trouvez-la dans la liste des appareils
-  connectés de votre box Internet, et réservez-la (un « bail DHCP statique »)
-  pour qu'elle ne change jamais.
+  continue de fonctionner quand votre accès Internet est coupé.
 - **Cloud** — par le relais du fabricant, comme l'application mobile hors de
   chez vous. Rien à configurer, mais il faut Internet des deux côtés.
 
-Une fois l'adresse renseignée, l'option **Préférer la connexion locale**
-décide du canal essayé en premier. Si le canal préféré ne répond pas,
-l'intégration utilise l'autre et le signale : le badge des radiateurs affiche
-un point orange, avec la raison dans son infobulle. Elle revient d'elle-même
-au canal préféré dès qu'il répond à nouveau.
+Inutile de chercher l'adresse de la box : si le champ **adresse IP locale**
+reste vide, l'intégration demande à Gladys de chercher la box sur votre
+réseau (comme le fait l'application Eco Aterno chez vous), vérifie que c'est
+bien la vôtre grâce à l'adresse MAC et au mot de passe, et se connecte en
+local. Si votre box Internet lui attribue plus tard une autre adresse,
+l'intégration la retrouve d'elle-même. Si la box reste introuvable, elle
+passe par le cloud.
+
+Vous pouvez toujours saisir l'adresse, par exemple si la recherche ne trouve
+rien sur votre réseau : trouvez-la dans la liste des appareils connectés de
+votre box Internet, et réservez-la (un « bail DHCP statique ») pour qu'elle
+ne change jamais. Une adresse saisie à la main est essayée en premier ; si
+elle ne répond plus, la recherche prend le relais.
+
+L'option **Préférer la connexion locale** décide du canal essayé en premier.
+Si le canal préféré ne répond pas, l'intégration utilise l'autre et le
+signale : le badge des radiateurs affiche un point orange, avec la raison
+dans son infobulle. Elle revient d'elle-même au canal préféré dès qu'il
+répond à nouveau.
 
 ### Actions
 
@@ -130,12 +141,13 @@ l'application Eco Aterno.
 
 **« La box Eco Aterno est injoignable. »** Regardez le voyant de la box :
 vert fixe, elle est accessible en local et à distance ; orange, en local
-uniquement ; rouge, pas de connexion Internet. Sans adresse IP locale dans la
-configuration, l'intégration a besoin du voyant vert.
+uniquement ; rouge, pas de connexion Internet. Si la box n'est pas joignable non
+plus sur le réseau local, l'intégration a besoin du voyant vert.
 
 **Le badge indique « cloud » avec un point orange.** La box n'a pas répondu
-à l'adresse IP locale : elle a probablement changé. Vérifiez-la dans votre
-box Internet et réservez-la.
+sur le réseau local, et la recherche ne l'a pas retrouvée. Vérifiez que la
+box et Gladys sont sur le même réseau, puis saisissez son adresse à la main
+(voir « Local ou cloud »).
 
 **Un radiateur manque.** Associez-le d'abord dans l'application Eco Aterno,
 puis appuyez sur **Rechercher de nouveaux radiateurs**.

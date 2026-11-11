@@ -42,8 +42,8 @@ Gladys innerhalb von Sekunden: Die Box meldet sie sofort.
 2. Geben Sie die **MAC-Adresse** der Box ein. Trennzeichen (`:` oder `-`)
    werden ignoriert.
 3. Geben Sie das **Passwort** der Box ein.
-4. Optional, aber empfohlen: Geben Sie die **lokale IP-Adresse** der Box ein
-   (siehe unten).
+4. Optional: Geben Sie die **lokale IP-Adresse** der Box ein. Bleibt das
+   Feld leer, sucht die Integration die Box in Ihrem Netz (siehe unten).
 5. Speichern Sie und drücken Sie **Verbindung testen**: Die Antwort nennt
    den genutzten Kanal und die Anzahl der gefundenen Heizkörper.
 6. Öffnen Sie den Tab **Entdeckung** und fügen Sie Ihre Heizkörper hinzu.
@@ -56,17 +56,29 @@ benennen Sie anschließend in Gladys um, was Sie möchten.
 Die Box ist auf zwei Wegen erreichbar, und die Integration beherrscht beide:
 
 - **Lokal** – direkt über Ihr Heimnetz. Schneller, und es funktioniert auch
-  bei ausgefallenem Internetzugang. Dafür wird die lokale IP-Adresse der Box
-  benötigt: Sie finden sie in der Geräteliste Ihres Routers; reservieren Sie
-  sie dort (eine „feste DHCP-Zuweisung“), damit sie sich nie ändert.
+  bei ausgefallenem Internetzugang.
 - **Cloud** – über das Relais des Herstellers, wie die mobile App außer
   Haus. Nichts zu konfigurieren, aber auf beiden Seiten ist Internet nötig.
 
-Ist die Adresse eingetragen, bestimmt der Schalter **Lokale Verbindung
-bevorzugen**, welcher Weg zuerst versucht wird. Antwortet der bevorzugte
-Kanal nicht, nutzt die Integration den anderen und zeigt das an: Das Abzeichen
-der Heizkörper erhält einen orangefarbenen Punkt, mit dem Grund im Tooltip.
-Sobald der bevorzugte Kanal wieder antwortet, kehrt sie von selbst zurück.
+Die Adresse der Box müssen Sie nicht suchen: Bleibt das Feld **lokale
+IP-Adresse** leer, lässt die Integration Gladys die Box in Ihrem Netz suchen
+(so wie die Eco-Aterno-App sie zu Hause findet), prüft anhand der
+MAC-Adresse und des Passworts, dass es Ihre ist, und verbindet sich lokal.
+Erhält die Box später von Ihrem Router eine andere Adresse, findet die
+Integration sie von selbst wieder. Wird die Box nicht gefunden, läuft die
+Verbindung über die Cloud.
+
+Sie können die Adresse trotzdem eintragen, etwa wenn die Suche in Ihrem Netz
+nichts findet: Sie finden sie in der Geräteliste Ihres Routers; reservieren
+Sie sie dort (eine „feste DHCP-Zuweisung“), damit sie sich nie ändert. Eine
+von Hand eingetragene Adresse wird zuerst versucht; antwortet sie nicht mehr,
+übernimmt die Suche.
+
+Der Schalter **Lokale Verbindung bevorzugen** bestimmt, welcher Weg zuerst
+versucht wird. Antwortet der bevorzugte Kanal nicht, nutzt die Integration
+den anderen und zeigt das an: Das Abzeichen der Heizkörper erhält einen
+orangefarbenen Punkt, mit dem Grund im Tooltip. Sobald der bevorzugte Kanal
+wieder antwortet, kehrt sie von selbst zurück.
 
 ### Aktionen
 
@@ -128,12 +140,13 @@ Eco-Aterno-App ein neues Passwort.
 
 **„Die Eco-Aterno-Box ist nicht erreichbar.“** Sehen Sie sich die Leuchte
 der Box an: Dauerhaft grün heißt lokal und aus der Ferne erreichbar, orange
-nur lokal, rot keine Internetverbindung. Ohne lokale IP-Adresse in der
-Konfiguration braucht die Integration die grüne Leuchte.
+nur lokal, rot keine Internetverbindung. Ist die Box auch im lokalen Netz
+nicht erreichbar, braucht die Integration die grüne Leuchte.
 
 **Das Abzeichen zeigt „Cloud“ mit einem orangefarbenen Punkt.** Die Box hat
-unter der lokalen IP-Adresse nicht geantwortet: Sie hat sich vermutlich
-geändert. Prüfen Sie sie in Ihrem Router und reservieren Sie sie.
+im lokalen Netz nicht geantwortet, und die Suche hat sie nicht wiedergefunden.
+Prüfen Sie, dass Box und Gladys im selben Netz sind, und tragen Sie ihre
+Adresse dann von Hand ein (siehe „Lokal oder Cloud“).
 
 **Ein Heizkörper fehlt.** Koppeln Sie ihn zuerst in der Eco-Aterno-App und
 drücken Sie dann **Nach neuen Heizkörpern suchen**.
